@@ -1,0 +1,134 @@
+---
+username: batterseapower
+author_name: Max Bolingbroke
+author_email: batterseapower@hotmail.com
+repository: ansi-wl-pprint
+hackage_package: ansi-wl-pprint
+hackage_doc_module: Text-PrettyPrint-ANSI-Leijen.html
+lighthouse_url: http://bsp.lighthouseapp.com/projects/16293-hs-ansi-wl-pprint
+---
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>{{ page.repository }} @ GitHub</title>
+    <link rel="stylesheet" href="http://{{ page.username }}.github.com/styles/main.css">
+    <link rel="stylesheet" href="http://{{ page.username }}.github.com/styles/syntax.css">
+</head>
+<body>
+    <a href="http://github.com/{{ page.username }}/{{ page.repository }}">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" />
+    </a>
+    <div id="container">
+        <h1>
+            <a href="http://github.com/{{ page.username }}/{{ page.repository }}">{{ page.repository }}</a>
+            <span class="small">by
+                <a href="http://github.com/{{ page.username }}">{{ page.author_name }}</a>
+            </span>
+        </h1>
+        
+        <div class="description">
+            ANSI Wadler/Leijen Pretty Printer
+        </div>
+        
+        <h2>Description</h2>
+        <div class="section">
+            <p>A pretty printing library based on Wadler's paper "A Prettier Printer". It has been enhanced with
+               support for ANSI terminal colored output using the <a href="http://batterseapower.github.com/ansi-terminal">ansi-terminal</a>
+               package.</p>
+
+            <p>This package is extensively based on Daan Leijen's excellent <a href="http://hackage.haskell.org/cgi-bin/hackage-scripts/package/wl-pprint">wl-pprint</a>
+                library.</p>
+        </div>
+        
+        <h2>Example</h2>
+        <div class="section">
+            <p>The latest version of the example is always available <a href="http://github.com/{{ page.username }}/{{ page.repository }}/tree/master/Text/PrettyPrint/ANSI/Example.hs">online</a>:</p>
+
+{% highlight haskell %}
+module Main (main) where
+
+import Text.PrettyPrint.ANSI.Leijen
+
+import System.IO
+
+
+main :: IO ()
+main = do
+    -- Going directly to the console is portable across Unix and Windows...
+    putDoc $ red (text "Red") <> comma <+> white (text "white") <+> text "and"
+                <+> blue (text "blue") <> char '!' <> linebreak
+    putDoc $ blue (text "Nested" <+> dullyellow (text "colors") <+> text "example")
+                <> linebreak
+    hPutDoc stdout $ onred (text "Red") <> comma <+> onwhite (text "white") <+>
+                        text "and" <+> onblue (text "blue") <> char '!' <> linebreak
+    hPutDoc stdout $ onblue (text "Nested" <+> ondullyellow (text "colors")
+                                <+> text "example") <> linebreak
+    
+    -- ...but going via a string will only preserve formatting information on Unix
+    putStr $ show $ green (text ("I will be green on Unix but uncolored " ++ 
+                                    "on Windows")) <> linebreak
+    
+    -- Let's see some non-color formatting:
+    putDoc $ text "We can do" <+> bold (text "boldness") <> text (", if your " ++
+                "terminal supports it, and even perhaps")
+                <+> underline (text "underlining")
+{% endhighlight %}
+            
+            <div class="screenshotframe">
+                <img class="screenshot" src="images/example.png" />
+            </div>
+        </div>
+        
+        <h2>Documentation</h2>
+        <p>Haddock documentation is <a href="http://hackage.haskell.org/packages/archive/{{ page.hackage_package }}/latest/doc/html/{{ page.hackage_doc_module }}">available at Hackage</a>.</p>
+        
+        <h2>Download</h2>
+        <div class="section">
+            <div class="downloadoption">
+                <div class="downloadoptionimage">
+                    <a href="http://hackage.haskell.org/cgi-bin/hackage-scripts/package/{{ page.hackage_package }}">
+                        <img width="90" src="http://{{ page.username }}.github.com/images/cabal-cube.png" />
+                    </a>
+                </div>
+                <div class="downloadoptiontext">
+                    <p>Install with <a href="http://haskell.org/haskellwiki/Cabal-Install">Cabal</a>:
+                       <pre>$ sudo cabal install {{ page.hackage_package }}</pre></p>
+                </div>
+                <div style="clear: both;"></div> <!-- force the div to clear so downloadoption encompasses the other two divs -->
+            </div>
+            <div class="downloadoption">
+                <div class="downloadoptionimage">
+                    <a href="http://github.com/{{ page.username }}/{{ page.repository }}/zipball/master">
+                        <img width="90" src="http://github.com/images/modules/download/zip.png" />
+                    </a>
+                </div>
+                <div class="downloadoptiontext">
+                    <p>Download this project in either <a href="http://github.com/{{ page.username }}/{{ page.repository }}/zipball/master">
+                       zip</a> or <a href="http://github.com/{{ page.username }}/{{ page.repository }}/tarball/master">tar</a> formats.</p>
+                </div>
+                <div style="clear: both;"></div> <!-- force the div to clear so downloadoption encompasses the other two divs -->
+            </div>
+            <div class="downloadoption">
+                <div class="downloadoptionimage">
+                    <a href="http://github.com/{{ page.username }}/{{ page.repository }}">
+                        <img width="90" src="http://{{ page.username }}.github.com/images/git.png" />
+                    </a>
+                </div>
+                <div class="downloadoptiontext">
+                    <p>Clone the project with <a href="http://git-scm.com">Git</a>:
+                       <pre>$ git clone git://github.com/{{ page.username }}/{{ page.repository }}</pre><br />
+                       Alternatively, browse the source on <a href="http://github.com/{{ page.username }}/{{ page.repository }}">GitHub</a></p>
+                </div>
+                <div style="clear: both;"></div> <!-- force the div to clear so downloadoption encompasses the other two divs -->
+            </div>
+        </div>
+        
+        <h2>Contact</h2>
+        <p>You can submit a ticket at <a href="{{ page.lighthouse_url }}">Lighthouse</a> to
+           report a bug.</p>
+        
+        <p>Other enquiries can be directed to me <a href="mailto:{{ page.author_email }}">via email</a></p>
+    </div>
+</body>
