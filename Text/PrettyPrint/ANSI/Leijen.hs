@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Text.PrettyPrint.ANSI.Leijen
@@ -152,6 +153,9 @@ import Data.String (IsString(..))
 import Data.Maybe (catMaybes)
 import Data.Monoid (Monoid, mappend, mconcat, mempty)
 
+#if __GLASGOW_HASKELL__ >= 710
+import Prelude hiding ((<$>))
+#endif
 
 infixr 5 </>,<//>,<$>,<$$>
 infixr 6 <>,<+>
