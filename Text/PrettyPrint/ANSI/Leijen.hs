@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Text.PrettyPrint.ANSI.Leijen
@@ -151,6 +153,10 @@ import System.Console.ANSI (Color(..), ColorIntensity(..), ConsoleLayer(..),
 import Data.String (IsString(..))
 import Data.Maybe (catMaybes)
 import Data.Monoid (Monoid, mappend, mconcat, mempty)
+
+#if defined(MIN_VERSION_base) && MIN_VERSION_base(4, 8, 0)
+import Prelude hiding ((<$>))
+#endif
 
 
 infixr 5 </>,<//>,<$>,<$$>
