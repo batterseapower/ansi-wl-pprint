@@ -209,11 +209,11 @@ semiBraces      = encloseSep lbrace   rbrace  semi
 --      ,3000]
 -- @
 encloseSep :: Doc -> Doc -> Doc -> [Doc] -> Doc
-encloseSep left right sep ds
+encloseSep left right fsep ds
     = case ds of
         []  -> left <> right
         [d] -> left <> d <> right
-        _   -> align (cat (zipWith (<>) (left : repeat sep) ds) <> right) 
+        _   -> align (cat (zipWith (<>) (left : repeat fsep) ds) <> right)
 
 
 -----------------------------------------------------------
@@ -245,8 +245,8 @@ encloseSep left right sep ds
 -- (If you want put the commas in front of their elements instead of
 -- at the end, you should use 'tupled' or, in general, 'encloseSep'.)
 punctuate :: Doc -> [Doc] -> [Doc]
-punctuate p []      = []
-punctuate p [d]     = [d]
+punctuate _ []      = []
+punctuate _ [d]     = [d]
 punctuate p (d:ds)  = (d <> p) : punctuate p ds
 
 
@@ -339,7 +339,7 @@ vcat :: [Doc] -> Doc
 vcat            = fold (<$$>)
 
 fold :: (Doc -> Doc -> Doc) -> [Doc] -> Doc
-fold f []       = empty
+fold _ []       = empty
 fold f ds       = foldr1 f ds
 
 -- | The document @(x \<\> y)@ concatenates document @x@ and document
@@ -858,11 +858,11 @@ flatAlt :: Doc -> Doc -> Doc
 flatAlt = FlatAlt
 
 flatten :: Doc -> Doc
-flatten (FlatAlt x y)    = y
+flatten (FlatAlt _ y)    = y
 flatten (Cat x y)        = Cat (flatten x) (flatten y)
 flatten (Nest i x)       = Nest i (flatten x)
 flatten  Line            = Fail
-flatten (Union x y)      = flatten x
+flatten (Union x _)      = flatten x
 flatten (Column f)       = Column (flatten . f)
 flatten (Columns f)      = Columns (flatten . f)
 flatten (Nesting f)      = Nesting (flatten . f)
@@ -1132,7 +1132,7 @@ renderFits fits rfrac w x
       -- best :: n = indentation of current line
       --         k = current column
       --        (ie. (k >= n) && (k - n == count of inserted characters)
-      best n k mb_fc mb_bc mb_in mb_it mb_un Nil = SEmpty
+      best _ _ _ _ _ _ _ Nil = SEmpty
       best n k mb_fc mb_bc mb_in mb_it mb_un (Cons i d ds)
         = case d of
             Fail          -> SFail
@@ -1182,12 +1182,12 @@ renderFits fits rfrac w x
 
 -- @fits1@ does 1 line lookahead.
 fits1 :: Int -> Int -> Int -> SimpleDoc -> Bool
-fits1 _ _ w x        | w < 0         = False
-fits1 _ _ w SFail                    = False
-fits1 _ _ w SEmpty                   = True
-fits1 p m w (SChar c x)              = fits1 p m (w - 1) x
-fits1 p m w (SText l s x)            = fits1 p m (w - l) x
-fits1 _ _ w (SLine i x)              = True
+fits1 _ _ w _        | w < 0         = False
+fits1 _ _ _ SFail                    = False
+fits1 _ _ _ SEmpty                   = True
+fits1 p m w (SChar _ x)              = fits1 p m (w - 1) x
+fits1 p m w (SText l _ x)            = fits1 p m (w - l) x
+fits1 _ _ _ (SLine _ _)              = True
 fits1 p m w (SSGR _ x)               = fits1 p m w x
 
 -- @fitsR@ has a little more lookahead: assuming that nesting roughly
@@ -1201,12 +1201,12 @@ fits1 p m w (SSGR _ x)               = fits1 p m w x
 -- m = minimum nesting level to fit in
 -- w = the width in which to fit the first line
 fitsR :: Int -> Int -> Int -> SimpleDoc -> Bool
-fitsR p m w x        | w < 0         = False
-fitsR p m w SFail                    = False
-fitsR p m w SEmpty                   = True
-fitsR p m w (SChar c x)              = fitsR p m (w - 1) x
-fitsR p m w (SText l s x)            = fitsR p m (w - l) x
-fitsR p m w (SLine i x) | m < i      = fitsR p m (p - i) x
+fitsR _ _ w _        | w < 0         = False
+fitsR _ _ _ SFail                    = False
+fitsR _ _ _ SEmpty                   = True
+fitsR p m w (SChar _ x)              = fitsR p m (w - 1) x
+fitsR p m w (SText l _ x)            = fitsR p m (w - l) x
+fitsR p m _ (SLine i x) | m < i      = fitsR p m (p - i) x
                         | otherwise  = True
 fitsR p m w (SSGR _ x)               = fitsR p m w x
 
@@ -1227,7 +1227,7 @@ renderCompact :: Doc -> SimpleDoc
 renderCompact x
     = scan 0 [x]
     where
-      scan k []     = SEmpty
+      scan _ []     = SEmpty
       scan k (d:ds) = case d of
                         Fail                    -> SFail
                         Empty                   -> scan k ds
@@ -1236,8 +1236,8 @@ renderCompact x
                         FlatAlt x _             -> scan k (x:ds)
                         Line                    -> SLine 0 (scan 0 ds)
                         Cat x y                 -> scan k (x:y:ds)
-                        Nest j x                -> scan k (x:ds)
-                        Union x y               -> scan k (y:ds)
+                        Nest _ x                -> scan k (x:ds)
+                        Union _ y               -> scan k (y:ds)
                         Column f                -> scan k (f k:ds)
                         Columns f               -> scan k (f Nothing:ds)
                         Nesting f               -> scan k (f 0:ds)
@@ -1269,7 +1269,7 @@ displayS SFail              = error $ "@SFail@ can not appear uncaught in a " ++
                               "rendered @SimpleDoc@"
 displayS SEmpty             = id
 displayS (SChar c x)        = showChar c . displayS x
-displayS (SText l s x)      = showString s . displayS x
+displayS (SText _ s x)      = showString s . displayS x
 displayS (SLine i x)        = showString ('\n':indentation i) . displayS x
 displayS (SSGR s x)         = showString (setSGRCode s) . displayS x
 
@@ -1288,7 +1288,7 @@ displayIO handle simpleDoc
                               "rendered @SimpleDoc@"
       display SEmpty         = return ()
       display (SChar c x)    = do{ hPutChar handle c; display x}
-      display (SText l s x)  = do{ hPutStr handle s; display x}
+      display (SText _ s x)  = do{ hPutStr handle s; display x}
       display (SLine i x)    = do{ hPutStr handle ('\n':indentation i); display x}
       display (SSGR s x)     = do{ hSetSGR handle s; display x}
 
@@ -1296,7 +1296,7 @@ displayIO handle simpleDoc
 -- default pretty printers: show, putDoc and hPutDoc
 -----------------------------------------------------------
 instance Show Doc where
-  showsPrec d doc       = displayS (renderPretty 0.4 80 doc)
+  showsPrec _ doc       = displayS (renderPretty 0.4 80 doc)
 
 -- | The action @(putDoc doc)@ pretty prints document @doc@ to the
 -- standard output, with a page width of 100 characters and a ribbon
