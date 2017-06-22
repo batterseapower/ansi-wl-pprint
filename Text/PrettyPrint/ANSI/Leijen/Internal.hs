@@ -44,74 +44,10 @@ infixr 5 </>,<//>,<$>,<$$>
 
 
 
--- $DocumentAlgebra
--- The combinators in this library satisfy many algebraic laws.
---
--- The concatenation operator '<>' is associative and has 'empty' as a left
--- and right unit:
---
---     > x <> (y <> z)           = (x <> y) <> z
---     > x <> empty              = x
---     > empty <> x              = x
---
--- The 'text' combinator is a homomorphism from string concatenation to
--- document concatenation:
---
---     > text (s ++ t)           = text s <> text t
---     > text ""                 = empty
---
--- The 'char' combinator behaves like one-element text:
---
---     > char c                  = text [c]
---
--- The 'nest' combinator is a homomorphism from addition to document
--- composition.  'nest' also distributes through document concatenation and is
--- absorbed by 'text' and 'align':
---
---     > nest (i + j) x          = nest i (nest j x)
---     > nest 0 x                = x
---     > nest i (x <> y)         = nest i x <> nest i y
---     > nest i empty            = empty
---     > nest i (text s)         = text s
---     > nest i (align x)        = align x
---
--- The 'group' combinator is absorbed by 'empty'.  'group' is commutative with
--- 'nest' and 'align':
---
---     > group empty             = empty
---     > group (text s <> x)     = text s <> group x
---     > group (nest i x)        = nest i (group x)
---     > group (align x)         = align (group x)
---
--- The 'align' combinator is absorbed by 'empty' and 'text'.
--- 'align' is idempotent:
---
---     > align empty             = empty
---     > align (text s)          = text s
---     > align (align x)         = align x
---
--- From the laws of the primitive combinators, we can derive many other laws
--- for the derived combinators.  For example, the /above/ operator '<$>' is
--- defined as:
---
---     > x <$> y                 = x <> line <> y
---
--- It follows that '<$>' is associative and that '<$>' and '<>' associate
--- with each other:
---
---     > x <$> (y <$> z)         = (x <$> y) <$> z
---     > x <> (y <$> z)          = (x <> y) <$> z
---     > x <$> (y <> z)          = (x <$> y) <> z
---
--- Similar laws also hold for the other line break operators '</>', '<$$>',
--- and '<//>'.
-
-
 -----------------------------------------------------------
 -- list, tupled and semiBraces pretty print a list of
 -- documents either horizontally or vertically aligned.
 -----------------------------------------------------------
-
 
 -- | The document @(list xs)@ comma separates the documents @xs@ and
 -- encloses them in square brackets. The documents are rendered
@@ -126,7 +62,6 @@ list            = encloseSep lbracket rbracket comma
 -- vertically. All comma separators are put in front of the elements.
 tupled :: [Doc] -> Doc
 tupled          = encloseSep lparen   rparen  comma
-
 
 -- | The document @(semiBraces xs)@ separates the documents @xs@ with
 -- semicolons and encloses them in braces. The documents are rendered
@@ -165,11 +100,9 @@ encloseSep left right sep ds
         [d] -> left <> d <> right
         _   -> align (cat (zipWith (<>) (left : repeat sep) ds) <> right)
 
-
 -----------------------------------------------------------
 -- punctuate p [d1,d2,...,dn] => [d1 <> p,d2 <> p, ... ,dn]
 -----------------------------------------------------------
-
 
 -- | @(punctuate p xs)@ concatenates all documents in @xs@ with
 -- document @p@ except for the last document.
@@ -199,11 +132,9 @@ punctuate p []      = []
 punctuate p [d]     = [d]
 punctuate p (d:ds)  = (d <> p) : punctuate p ds
 
-
 -----------------------------------------------------------
 -- high-level combinators
 -----------------------------------------------------------
-
 
 -- | The document @(sep xs)@ concatenates all documents @xs@ either
 -- horizontally with @(\<+\>)@, if it fits the page, or vertically with
@@ -226,7 +157,6 @@ fillSep         = fold (</>)
 -- horizontally with @(\<+\>)@.
 hsep :: [Doc] -> Doc
 hsep            = fold (<+>)
-
 
 -- | The document @(vsep xs)@ concatenates all documents @xs@
 -- vertically with @(\<$\>)@. If a 'group' undoes the line breaks
@@ -404,7 +334,6 @@ lbracket        = char '['
 rbracket :: Doc
 rbracket        = char ']'
 
-
 -- | The document @squote@ contains a single quote, \"'\".
 squote :: Doc
 squote          = char '\''
@@ -434,7 +363,6 @@ backslash       = char '\\'
 -- | The document @equals@ contains an equal sign, \"=\".
 equals :: Doc
 equals          = char '='
-
 
 -----------------------------------------------------------
 -- Combinators for prelude types
@@ -476,7 +404,6 @@ double d        = text (show d)
 rational :: Rational -> Doc
 rational r      = text (show r)
 
-
 -----------------------------------------------------------
 -- overloading "pretty"
 -----------------------------------------------------------
@@ -516,7 +443,6 @@ instance Pretty Float where
 
 instance Pretty Double where
   pretty d      = double d
-
 
 --instance Pretty Rational where
 --  pretty r      = rational r
@@ -560,7 +486,6 @@ fillBreak f x   = width x (\w ->
                   if (w > f) then nest f linebreak
                              else text (spaces (f - w)))
 
-
 -- | The document @(fill i x)@ renders document @x@. It than appends
 -- @space@s until the width is equal to @i@. If the width of @x@ is
 -- already larger, nothing is appended. This combinator is quite
@@ -590,7 +515,6 @@ fill f d        = width d (\w ->
 
 width :: Doc -> (Int -> Doc) -> Doc
 width d f       = column (\k1 -> d <> column (\k2 -> f (k2 - k1)))
-
 
 -----------------------------------------------------------
 -- semi primitive: Alignment and indentation
@@ -703,7 +627,6 @@ data Doc        = Fail
                                 (Maybe Bool)                     -- Italicization to revert to.
                                 (Maybe Underlining)              -- Underlining to revert to.
 
-
 -- | The data type @SimpleDoc@ represents rendered documents and is
 -- used by the display functions.
 --
@@ -723,7 +646,6 @@ data SimpleDoc  = SFail
                 | SLine !Int SimpleDoc
                 | SSGR [SGR] SimpleDoc
 
-
 -- MCB: Not in the wl-pprint package that we forked from. I added this when the "pretty" package
 -- from base gained a Monoid instance (<http://hackage.haskell.org/trac/ghc/ticket/4378>):
 instance Monoid Doc where
@@ -737,7 +659,6 @@ instance Semi.Semigroup Doc where
 -- MCB: also added when "pretty" got the corresponding instances:
 instance IsString Doc where
     fromString = text
-
 
 -- | The empty document is, indeed, empty. Although @empty@ has no
 -- content, it does have a \'height\' of 1 and behaves exactly like
@@ -830,7 +751,6 @@ flatten (Intensify i x)  = Intensify i (flatten x)
 flatten (Italicize b x)  = Italicize b (flatten x)
 flatten (Underline u x)  = Underline u (flatten x)
 flatten other            = other                     --Empty,Char,Text,RestoreFormat
-
 
 -----------------------------------------------------------
 -- Colors
@@ -938,7 +858,6 @@ ondullcolor = Color Background Dull
 oncolorFunctions :: Color -> (Doc -> Doc, Doc -> Doc)
 oncolorFunctions what = (oncolor what, ondullcolor what)
 
-
 -----------------------------------------------------------
 -- Console Intensity
 -----------------------------------------------------------
@@ -953,7 +872,6 @@ debold = Intensify NormalIntensity
 
 -- NB: I don't support FaintIntensity here because it is not widely supported by terminals.
 
-
 -----------------------------------------------------------
 -- Italicization
 -----------------------------------------------------------
@@ -963,7 +881,6 @@ debold = Intensify NormalIntensity
 I'm in two minds about providing these functions, since italicization is so rarely implemented.
 It is especially bad because "italicization" may cause the meaning of colors to flip, which will
 look a bit weird, to say the least...
-
 
 -- | Displays a document in italics. This is not widely supported, and it's use is not recommended
 italicize :: Doc -> Doc
@@ -1024,7 +941,6 @@ plain (RestoreFormat _ _ _ _ _) = Empty
 -- list of indentation/document pairs; saves an indirection over [(Int,Doc)]
 data Docs   = Nil
             | Cons !Int Doc Docs
-
 
 -- | This is the default pretty printer which is used by 'show',
 -- 'putDoc' and 'hPutDoc'. @(renderPretty ribbonfrac width x)@ renders
@@ -1174,7 +1090,6 @@ fitsR p m w (SSGR _ x)               = fitsR p m w x
 --  fast and fewer characters output, good for machines
 -----------------------------------------------------------
 
-
 -- | @(renderCompact x)@ renders document @x@ without adding any
 -- indentation. Since no \'pretty\' printing is involved, this
 -- renderer is very fast. The resulting output contains fewer
@@ -1212,7 +1127,6 @@ renderCompact x
 -- Displayers:  displayS and displayIO
 -----------------------------------------------------------
 
-
 -- | @(displayS simpleDoc)@ takes the output @simpleDoc@ from a
 -- rendering function and transforms it to a 'ShowS' type (for use in
 -- the 'Show' class).
@@ -1231,7 +1145,6 @@ displayS (SChar c x)        = showChar c . displayS x
 displayS (SText l s x)      = showString s . displayS x
 displayS (SLine i x)        = showString ('\n':indentation i) . displayS x
 displayS (SSGR s x)         = showString (setSGRCode s) . displayS x
-
 
 -- | @(displayIO handle simpleDoc)@ writes @simpleDoc@ to the file
 -- handle @handle@. This function is used for example by 'hPutDoc':
