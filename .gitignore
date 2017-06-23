@@ -6,3 +6,5 @@ Thumbs.db
 dist/
 *.hi
 *.o
+.stack-work
+
