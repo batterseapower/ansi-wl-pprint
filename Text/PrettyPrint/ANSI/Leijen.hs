@@ -17,7 +17,7 @@
 -- @
 --      \"A prettier printer\"
 --      Draft paper, April 1997, revised March 1998.
---      <http://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf>
+--      <https://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf>
 -- @
 --
 -- In their bare essence, the combinators given by Wadler are
