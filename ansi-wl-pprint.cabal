@@ -41,7 +41,7 @@ library
     -- see also notes in Text.PrettyPrint.ANSI.Leijen
     build-depends: semigroups >= 0.1 && < 0.19
 
-  build-depends: ansi-terminal >= 0.4.0 && < 0.7
+  build-depends: ansi-terminal >= 0.4.0 && < 0.8
   build-depends: base >= 4.5 && < 5
 
 executable ansi-wl-pprint-example
