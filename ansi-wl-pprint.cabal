@@ -16,7 +16,7 @@ maintainer:          Edward Kmett <ekmett@gmail.com>
 bug-reports:         http://github.com/ekmett/ansi-wl-pprint/issues
 homepage:            http://github.com/ekmett/ansi-wl-pprint
 build-type:          Simple
-tested-with:         GHC==7.4.2, GHC==7.6.3, GHC==7.8.4, GHC==7.10.3, GHC==8.0.2, GHC==8.2.1, GHC==8.4.1, GHC==8.5.*
+tested-with:         GHC==7.4.2, GHC==7.6.3, GHC==7.8.4, GHC==7.10.3, GHC==8.0.2, GHC==8.2.2, GHC==8.4.3, GHC==8.6.3
 
 source-repository head
   type: git
@@ -41,7 +41,7 @@ library
     -- see also notes in Text.PrettyPrint.ANSI.Leijen
     build-depends: semigroups >= 0.1 && < 0.19
 
-  build-depends: ansi-terminal >= 0.4.0 && < 0.9
+  build-depends: ansi-terminal >= 0.4.0 && < 0.10
   build-depends: base >= 4.5 && < 5
 
 executable ansi-wl-pprint-example
