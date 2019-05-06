@@ -33,8 +33,11 @@ before_cache:
   - rm -rfv $CABALHOME/packages/head.hackage
 matrix:
   include:
-    - compiler: ghc-8.6.3
-      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.6.3","cabal-install-2.4"]}}
+    - compiler: ghc-8.8.1
+      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.8.1","cabal-install-3.0"]}}
+      env: GHCHEAD=true
+    - compiler: ghc-8.6.5
+      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.6.5","cabal-install-2.4"]}}
     - compiler: ghc-8.4.3
       addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.4.3","cabal-install-2.4"]}}
     - compiler: ghc-8.2.2
@@ -58,6 +61,7 @@ matrix:
       env: GHCHEAD=true
   allow_failures:
     - compiler: ghc-head
+    - compiler: ghc-8.8.1
 before_install:
   - HC=$(echo "/opt/$CC/bin/ghc" | sed 's/-/\//')
   - HCPKG="$HC-pkg"
