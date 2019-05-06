@@ -166,7 +166,6 @@ import Data.Monoid ((<>))
 import Data.Monoid (Monoid, mappend, mconcat, mempty, (<>))
 #else
 import Data.Monoid (Monoid, mappend, mconcat, mempty)
-infixr 6 <>
 #endif
 
 -- $DocumentAlgebra
