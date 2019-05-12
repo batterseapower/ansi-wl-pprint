@@ -1,11 +1,12 @@
 name:                ansi-wl-pprint
-version:             0.6.8.2
+version:             0.6.9
 cabal-version:       >= 1.10
 category:            User Interfaces, Text
 synopsis:            The Wadler/Leijen Pretty Printer for colored ANSI terminal output
 description:         {
 
-This is a pretty printing library based on Wadler's paper ["A Prettier Printer"](https://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf). It has been enhanced with support for ANSI terminal colored output using the [ansi-terminal](https://hackage.haskell.org/package/ansi-terminal) package.
+This is a pretty printing library based on Wadler's paper ["A Prettier Printer"](https://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf).
+It has been enhanced with support for ANSI terminal colored output using the [ansi-terminal](https://hackage.haskell.org/package/ansi-terminal) package.
 
 }
 license:             BSD3
@@ -41,10 +42,16 @@ library
       ghc-options: -Wnoncanonical-monadfail-instances
   else
     -- see also notes in Text.PrettyPrint.ANSI.Leijen
-    build-depends: semigroups >= 0.1 && < 0.20
+    build-depends: semigroups >= 0.18.5 && < 0.20
 
-  build-depends: ansi-terminal >= 0.4.0 && < 0.10
+  build-depends: ansi-terminal >= 0.9.1 && < 0.10
   build-depends: base >= 4.3 && < 5
+
+  if impl(ghc >= 7.4)
+    default-extensions: Safe
+  else
+    if impl(ghc >= 7.2)
+      default-extensions: Trustworthy
 
 executable ansi-wl-pprint-example
   default-language: Haskell2010
